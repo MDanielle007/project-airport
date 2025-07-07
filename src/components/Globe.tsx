@@ -47,17 +47,20 @@ export const GlobeComponent: React.FC<GlobeProps> = ({
     return airports;
   }, [fromAirport, toAirport]);
 
-  // Prepare flight path data
-  const pathData = React.useMemo(() => {
+  // Prepare flight path data using arcs instead of paths
+  const arcData = React.useMemo(() => {
     if (!flightPath || !fromAirport || !toAirport) return [];
     
     return [{
-      coords: flightPath.path.map(point => [point.lng, point.lat]),
+      startLat: fromAirport.lat,
+      startLng: fromAirport.lng,
+      endLat: toAirport.lat,
+      endLng: toAirport.lng,
       color: '#F59E0B',
-      strokeWidth: 2,
-      dashGap: 1,
-      dashLength: 2,
-      dashAnimateTime: 3000
+      strokeWidth: 3,
+      dashLength: 1,
+      dashGap: 0.5,
+      dashAnimateTime: 2000
     }];
   }, [flightPath, fromAirport, toAirport]);
 
@@ -100,17 +103,16 @@ export const GlobeComponent: React.FC<GlobeProps> = ({
           `;
         }}
         
-        // Paths (Flight Routes)
-        pathsData={pathData}
-        pathPointLat={idx => pathData[0]?.coords[idx][1]}
-        pathPointLng={idx => pathData[0]?.coords[idx][0]}
-        pathColor={d => (d as any).color}
-        pathStroke={d => (d as any).strokeWidth}
-        pathDashLength={d => (d as any).dashLength}
-        pathDashGap={d => (d as any).dashGap}
-        pathDashAnimateTime={d => (d as any).dashAnimateTime}
-        pathPointAlt={0.1}
-        pathTransitionDuration={2000}
+        // Arcs (Flight Routes) - Using arcs instead of paths for better visualization
+        arcsData={arcData}
+        arcColor={d => (d as any).color}
+        arcStroke={d => (d as any).strokeWidth}
+        arcDashLength={d => (d as any).dashLength}
+        arcDashGap={d => (d as any).dashGap}
+        arcDashAnimateTime={d => (d as any).dashAnimateTime}
+        arcAltitude={0.3}
+        arcAltitudeAutoScale={0.5}
+        arcsTransitionDuration={2000}
         
         // Globe appearance
         atmosphereColor="rgba(59, 130, 246, 0.6)"
